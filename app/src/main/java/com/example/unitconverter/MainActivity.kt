@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,10 +23,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -61,11 +71,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             UnitConverterTheme {
-                val navController = rememberNavController()
-                // AppNavigation(navController = navController)
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LandingPage(
-                        navController = navController,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -75,34 +82,24 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "landing_screen") {
-        composable("landing_screen") { LandingPage(navController) }
-        composable("length_screen") { LengthScreen() }
-        composable("temp_screen") { }
-        composable("fluids_screen") { }
-        composable("speed_screen") { }
-        composable("mass_screen") { }
-    }
-}
-
-@Composable
-fun LandingPage(navController: NavHostController, modifier: Modifier = Modifier) {
-
+fun LandingPage(modifier: Modifier = Modifier) {
     val appBg: Painter = painterResource(R.drawable.app_bg)
-    val context = LocalContext.current as ComponentActivity
 
     Box(modifier = modifier) {
         Image(
             painter = appBg,
             contentDescription = null,
             contentScale = ContentScale.Crop,
+            modifier = modifier.fillMaxHeight()
         )
         Column(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             DateTimeWidget()
+
             Text(
                 text = stringResource(id = R.string.app_name),
                 color = Color.White,
@@ -122,15 +119,15 @@ fun LandingPage(navController: NavHostController, modifier: Modifier = Modifier)
             val painters: List<Painter> = icons.map { painterResource(id = it) }
             ItemList(items = items, painters = painters) { item ->
                 when (item) {
-                    "Length" -> Toast.makeText(context, "$item Clicked", Toast.LENGTH_SHORT).show()
-                    "Temperature" -> Toast.makeText(context, "$item Clicked", Toast.LENGTH_SHORT).show()
-                    "Fluids" -> Toast.makeText(context, "$item Clicked", Toast.LENGTH_SHORT).show()
-                    "Speed" -> Toast.makeText(context, "$item Clicked", Toast.LENGTH_SHORT).show()
-                    "Mass" -> Toast.makeText(context, "$item Clicked", Toast.LENGTH_SHORT).show()
+                    "Length" -> OpenActivity()
+                    "Temperature" -> OpenActivity()
+                    "Fluids" -> OpenActivity()
+                    "Speed" -> OpenActivity()
+                    "Mass" -> OpenActivity()
                 }
             }
             Button(
-                onClick = { context.finish() },
+                onClick = {  },
                 modifier = modifier
                     .background(Color.Red, shape = CircleShape)
                     .width(50.dp)
@@ -148,6 +145,11 @@ fun LandingPage(navController: NavHostController, modifier: Modifier = Modifier)
         }
     }
 }
+
+fun OpenActivity() {
+
+}
+
 
 @Composable
 fun ItemRow(text: String, painter: Painter, modifier: Modifier) {
@@ -246,21 +248,112 @@ fun DateTimeWidget() {
 }
 
 @Composable
-fun LengthScreen() {
-    Text(text = "Length Conversion Activity")
+fun TemperatureScreen(modifier: Modifier = Modifier) {
+    val appBg: Painter = painterResource(R.drawable.app_bg)
+    Box(modifier = modifier) {
+        Image(
+            painter = appBg,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = modifier.fillMaxHeight()
+        )
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            DateTimeWidget()
+
+            Text(
+                text = "Temperature",
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = modifier.padding(4.dp)
+            )
+
+            DropdownMenuComponent(labelText = "Celcius to Fahrenheit")
+
+            var text by remember { mutableStateOf("") }
+
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White, shape = RoundedCornerShape(40.dp))
+                        .padding(vertical = 8.dp, horizontal = 12.dp)
+                        .height(60.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "C",
+                        color = Color(0xff0097b2),
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = modifier.padding(4.dp)
+                    )
+                    TextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        label = { Text("Enter text") },
+                        modifier = Modifier
+                            .padding(16.dp)
+                    )
+                    IconButton(
+                        onClick = { /* Handle send action */ },
+                        modifier = Modifier
+                            .size(50.dp)
+                            .background(Color.Transparent, shape = CircleShape)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.message),
+                            contentDescription = "Send",
+                            tint = Color(0xff000000)
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
+
+@Composable
+fun DropdownMenuComponent(labelText: String) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOption by remember { mutableStateOf(labelText) }
+
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp)) {
+        TextField(
+            value = selectedOption,
+            onValueChange = { selectedOption = it },
+            label = { Text(text = labelText) },
+            modifier = Modifier.fillMaxWidth(),
+            readOnly = true,
+            trailingIcon = {
+                IconButton(onClick = { expanded = !expanded }) {
+                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
+                }
+            }
+        )
+
+
+    }
+}
+
 
 /* Previews */
 
-@Preview(showBackground = true)
-@Composable
-fun LandingPagePreview() {
-    val navController = rememberNavController()
-    AppNavigation(navController = navController)
-    UnitConverterTheme {
-        LandingPage(navController = navController, modifier = Modifier)
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -277,4 +370,17 @@ fun PreviewItemList() {
     ItemList(items = items, painters = painters) {
 
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ActivityPreview(){
+    TemperatureScreen(modifier = Modifier)
+}
+
+@Preview (showBackground = true)
+@Composable
+fun MainPreview() {
+    val navController = rememberNavController()
+    LandingPage(modifier = Modifier)
 }
