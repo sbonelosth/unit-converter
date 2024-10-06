@@ -1,7 +1,6 @@
 package com.example.unitconverter
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,17 +21,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -44,11 +40,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,9 +50,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.unitconverter.ui.theme.UnitConverterTheme
 import kotlinx.coroutines.delay
@@ -127,7 +118,7 @@ fun LandingPage(modifier: Modifier = Modifier) {
                 }
             }
             Button(
-                onClick = {  },
+                onClick = { },
                 modifier = modifier
                     .background(Color.Red, shape = CircleShape)
                     .width(50.dp)
@@ -248,78 +239,94 @@ fun DateTimeWidget() {
 }
 
 @Composable
-fun TemperatureScreen(modifier: Modifier = Modifier) {
-    val appBg: Painter = painterResource(R.drawable.app_bg)
-    Box(modifier = modifier) {
-        Image(
-            painter = appBg,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier.fillMaxHeight()
+fun InputRow(
+    userInput: String,
+    onUserInputChange: (String) -> Unit,
+    onSendClick: () -> Unit,
+    conversionType: String
+) {
+    val (inputLabel, inputUnit) = when (conversionType) {
+        // Temperature conversions
+        "Celsius to Fahrenheit" -> "Temperature (°C)" to "°C"
+        "Fahrenheit to Celsius" -> "Temperature (°F)" to "°F"
+        "Celsius to Kelvin" -> "Temperature (°C)" to "°C"
+        "Kelvin to Celsius" -> "Temperature (K)" to "K"
+
+        // Length conversions
+        "Meters to Kilometers" -> "Length (m)" to "m"
+        "Kilometers to Meters" -> "Length (km)" to "km"
+        "Feet to Meters" -> "Length (ft)" to "ft"
+        "Meters to Feet" -> "Length (m)" to "m"
+
+        // Fluid conversions
+        "Liters to Milliliters" -> "Volume (L)" to "L"
+        "Milliliters to Liters" -> "Volume (mL)" to "mL"
+        "Gallons to Liters" -> "Volume (gal)" to "gal"
+        "Liters to Gallons" -> "Volume (L)" to "L"
+
+        // Mass conversions
+        "Kilograms to Grams" -> "Mass (kg)" to "kg"
+        "Grams to Kilograms" -> "Mass (g)" to "g"
+        "Pounds to Kilograms" -> "Mass (lb)" to "lb"
+        "Kilograms to Pounds" -> "Mass (kg)" to "kg"
+
+        // Speed conversions
+        "km/h to mph" -> "Speed (km/h)" to "km/h"
+        "mph to km/pr" -> "Speed (mph)" to "mph"
+
+        else -> "Value" to ""
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, shape = RoundedCornerShape(40.dp))
+            .height(60.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = inputUnit,
+            color = Color(0xff0097b2),
+            textAlign = TextAlign.Center,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold
         )
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally
+        TextField(
+            value = userInput,
+            onValueChange = onUserInputChange,
+            label = { Text(inputLabel) }
+        )
+        Box(
+            modifier = Modifier
+                .width(30.dp)
+                .background(Color.Transparent)
+                .clickable { onSendClick() }
         ) {
-            DateTimeWidget()
-
-            Text(
-                text = "Temperature",
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = modifier.padding(4.dp)
+            Icon(
+                painter = painterResource(id = R.drawable.message),
+                contentDescription = "Send",
+                tint = Color(0xff000000)
             )
+        }
+    }
+}
 
-            DropdownMenuComponent(labelText = "Celcius to Fahrenheit")
-
-            var text by remember { mutableStateOf("") }
-
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(bottom = 16.dp),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White, shape = RoundedCornerShape(40.dp))
-                        .padding(vertical = 8.dp, horizontal = 12.dp)
-                        .height(60.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "C",
-                        color = Color(0xff0097b2),
-                        textAlign = TextAlign.Center,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = modifier.padding(4.dp)
-                    )
-                    TextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        label = { Text("Enter text") },
-                        modifier = Modifier
-                            .padding(16.dp)
-                    )
-                    IconButton(
-                        onClick = { /* Handle send action */ },
-                        modifier = Modifier
-                            .size(50.dp)
-                            .background(Color.Transparent, shape = CircleShape)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.message),
-                            contentDescription = "Send",
-                            tint = Color(0xff000000)
-                        )
-                    }
+@Composable
+fun ConversionChat(chatMessages: List<Pair<String, String>>, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .padding(16.dp)
+    ) {
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            reverseLayout = false
+        ) {
+            items(chatMessages) { message ->
+                if (message.first == "user") {
+                    UserChatBubble(message.second)
+                } else {
+                    ResponseChatBubble(message.second)
                 }
             }
         }
@@ -327,33 +334,61 @@ fun TemperatureScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun DropdownMenuComponent(labelText: String) {
-    var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf(labelText) }
-
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp)) {
-        TextField(
-            value = selectedOption,
-            onValueChange = { selectedOption = it },
-            label = { Text(text = labelText) },
-            modifier = Modifier.fillMaxWidth(),
-            readOnly = true,
-            trailingIcon = {
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
-                }
-            }
+fun UserChatBubble(message: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.End
+    ) {
+        Text(
+            text = message,
+            color = Color.White,
+            modifier = Modifier
+                .background(Color(0xFF14ACE4), shape = RoundedCornerShape(8.dp))
+                .padding(8.dp)
         )
+        Spacer(modifier = Modifier.width(8.dp))
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .background(Color(0xFF14ACE4), shape = CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "C", color = Color.White, fontWeight = FontWeight.Bold)
+        }
+    }
+}
 
-
+@Composable
+fun ResponseChatBubble(message: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .background(Color(0xFF00BF63), shape = CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "K", color = Color.White, fontWeight = FontWeight.Bold)
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = message,
+            color = Color.White,
+            modifier = Modifier
+                .background(Color(0xFF00BF63), shape = RoundedCornerShape(8.dp))
+                .padding(8.dp)
+        )
     }
 }
 
 
 /* Previews */
-
 
 @Preview(showBackground = true)
 @Composable
@@ -372,13 +407,15 @@ fun PreviewItemList() {
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
-fun ActivityPreview(){
+fun ActivityPreview() {
     TemperatureScreen(modifier = Modifier)
 }
 
-@Preview (showBackground = true)
+
+@Preview(showBackground = true)
 @Composable
 fun MainPreview() {
     val navController = rememberNavController()
