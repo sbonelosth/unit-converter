@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 
 class Temperature : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,4 +85,10 @@ fun handleTempSend(
         }
         updateState("", chatMessages + ("user" to userMessage) + ("response" to responseMessage))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TemperaturePreview() {
+    TemperatureScreen(modifier = Modifier)
 }

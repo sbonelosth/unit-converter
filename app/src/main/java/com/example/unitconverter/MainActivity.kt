@@ -407,17 +407,8 @@ fun PreviewItemList() {
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun ActivityPreview() {
-    TemperatureScreen(modifier = Modifier)
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun MainPreview() {
-    val navController = rememberNavController()
     LandingPage(modifier = Modifier)
 }

@@ -2,6 +2,7 @@ package com.example.unitconverter
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -55,7 +57,7 @@ fun ConversionScreen(
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.padding(16.dp)
             )
 
             Column(
@@ -110,6 +112,50 @@ fun ConversionScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            val icons = listOf(
+                R.drawable.ruler,
+                R.drawable.thermometer,
+                R.drawable.water,
+                R.drawable.speed,
+                R.drawable.scale
+            )
+
+            val selectedIcon = when (title) {
+                "Length" -> icons[0]
+                "Temperature" -> icons[1]
+                "Fluids" -> icons[2]
+                "Speed" -> icons[3]
+                "Mass" -> icons[4]
+                else -> icons[0]
+            }
+
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Image(
+                    painter = painterResource(id = selectedIcon),
+                    contentDescription = null
+                )
+
+                Box(
+                    modifier = Modifier
+                        .width(50.dp)
+                        .background(Color.Transparent)
+                        .clickable { }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.left_arrow),
+                        contentDescription = "Send",
+                        tint = Color(0xffff5757)
+                    )
+                }
+            }
+
             InputRow(
                 userInput = userInput,
                 onUserInputChange = onUserInputChange,
@@ -118,4 +164,36 @@ fun ConversionScreen(
             )
         }
     }
+}
+
+@Preview (showBackground = true)
+@Composable
+fun ConversionScreenPreview() {
+    var userInput by remember { mutableStateOf("") }
+    var chatMessages by remember { mutableStateOf(listOf<Pair<String, String>>()) }
+    var selectedConversion by remember { mutableStateOf("Celsius to Fahrenheit") }
+
+    val items = listOf(
+        "Celsius to Fahrenheit",
+        "Fahrenheit to Celsius",
+        "Celsius to Kelvin",
+        "Kelvin to Celsius"
+    )
+
+    ConversionScreen(
+        title = "Temperature",
+        items = items,
+        selectedConversion = selectedConversion,
+        onConversionSelected = { selectedConversion = it },
+        userInput = userInput,
+        onUserInputChange = { userInput = it },
+        onSendClick = {
+            handleTempSend(userInput, chatMessages, selectedConversion) { newInput, newMessages ->
+                userInput = newInput
+                chatMessages = newMessages
+            }
+        },
+        chatMessages = chatMessages,
+        modifier = Modifier
+    )
 }
