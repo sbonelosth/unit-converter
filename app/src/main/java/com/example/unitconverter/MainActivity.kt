@@ -135,20 +135,16 @@ fun LandingPage(context: Context?) {
 
             Spacer(modifier = Modifier.height(80.dp))
 
-            Button(
-                onClick = { (context as? Activity)?.finishAffinity() },
+            Box(
                 modifier = Modifier
-                    .background(Color.Red, shape = CircleShape)
-                    .width(50.dp)
-                    .height(50.dp)
-                    .align(Alignment.CenterHorizontally),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF0F8FF)),
-                shape = CircleShape
+                    .width(40.dp)
+                    .background(Color.Transparent)
+                    .clickable { (context as? Activity)?.finishAffinity() }
             ) {
-                Text(
-                    text = "❌",
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp,
+                Icon(
+                    painter = painterResource(id = R.drawable.cross),
+                    contentDescription = null,
+                    tint = Color(0xffff5757)
                 )
             }
         }
@@ -283,10 +279,10 @@ fun InputRow(
         "Liters in Gallons" -> "Volume (L)" to "L"
 
         // Mass conversions
-        "Kilograms to Grams" -> "Mass (kg)" to "kg"
-        "Grams to Kilograms" -> "Mass (g)" to "g"
-        "Pounds to Kilograms" -> "Mass (lb)" to "lb"
-        "Kilograms to Pounds" -> "Mass (kg)" to "kg"
+        "Kilograms in Grams" -> "Mass (kg)" to "kg"
+        "Grams in Kilograms" -> "Mass (g)" to "g"
+        "Pounds in Kilograms" -> "Mass (lb)" to "lb"
+        "Kilograms in Pounds" -> "Mass (kg)" to "kg"
 
         // Speed conversions
         "km/h to mph" -> "Speed (km/h)" to "km/h"

@@ -27,13 +27,13 @@ class Mass : ComponentActivity() {
 fun MassScreen(modifier: Modifier = Modifier, context: Context? = null) {
     var userInput by remember { mutableStateOf("") }
     var chatMessages by remember { mutableStateOf(listOf<Pair<String, String>>()) }
-    var selectedConversion by remember { mutableStateOf("Kilograms to Grams") }
+    var selectedConversion by remember { mutableStateOf("Kilograms in Grams") }
 
     val items = listOf(
-        "Kilograms to Grams",
-        "Grams to Kilograms",
-        "Pounds to Kilograms",
-        "Kilograms to Pounds"
+        "Kilograms in Grams",
+        "Grams in Kilograms",
+        "Pounds in Kilograms",
+        "Kilograms in Pounds"
     )
 
     ConversionScreen(
@@ -65,14 +65,14 @@ fun handleMassSend(
 
     if (userInput.isNotBlank() && regex.matches(userInput)) {
         val result = when (conversionType) {
-            "Kilograms to Grams" -> UnitConverter().kilogramsToGrams(userInput.toDouble())
-            "Grams to Kilograms" -> UnitConverter().gramsToKilograms(userInput.toDouble())
-            "Pounds to Kilograms" -> UnitConverter().poundsToKilograms(userInput.toDouble())
-            "Kilograms to Pounds" -> UnitConverter().kilogramsToPounds(userInput.toDouble())
+            "Kilograms in Grams" -> UnitConverter().kilogramsToGrams(userInput.toDouble())
+            "Grams in Kilograms" -> UnitConverter().gramsToKilograms(userInput.toDouble())
+            "Pounds in Kilograms" -> UnitConverter().poundsToKilograms(userInput.toDouble())
+            "Kilograms in Pounds" -> UnitConverter().kilogramsToPounds(userInput.toDouble())
             else -> "Invalid conversion type"
         }
         val userMessage = "What is $userInput $conversionType?"
-        val responseMessage = "That is $result ${conversionType.substring(conversionType.indexOf("to") + 3)}"
+        val responseMessage = "That is $result ${conversionType.substring(conversionType.indexOf("in") + 3)}"
         updateState("", chatMessages + ("user" to userMessage) + ("response" to responseMessage))
     } else {
         updateState("", chatMessages + ("user" to "What is $userInput $conversionType?") + ("response" to "Please enter a valid number."))
