@@ -1,8 +1,12 @@
 package com.example.unitconverter
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,18 +14,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.unitconverter.ui.theme.UnitConverterTheme
 
 class Temperature : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TemperatureScreen()
+            TemperatureScreen(Modifier, this)
         }
     }
 }
 
 @Composable
-fun TemperatureScreen(modifier: Modifier = Modifier) {
+fun TemperatureScreen(modifier: Modifier = Modifier, context : Context?) {
     var userInput by remember { mutableStateOf("") }
     var chatMessages by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     var selectedConversion by remember { mutableStateOf("Celsius to Fahrenheit") }
@@ -47,7 +52,8 @@ fun TemperatureScreen(modifier: Modifier = Modifier) {
             }
         },
         chatMessages = chatMessages,
-        modifier = modifier
+        modifier = modifier,
+        onBackClick = { context?.startActivity(Intent(context, MainActivity::class.java)) }
     )
 }
 
@@ -90,5 +96,5 @@ fun handleTempSend(
 @Preview(showBackground = true)
 @Composable
 fun TemperaturePreview() {
-    TemperatureScreen(modifier = Modifier)
+    TemperatureScreen(modifier = Modifier, context = null)
 }

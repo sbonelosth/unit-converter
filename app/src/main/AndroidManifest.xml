@@ -15,14 +15,29 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.UnitConverter">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Length"
+            android:exported="true"
+            android:theme="@style/Theme.UnitConverter"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Temperature"
+            android:exported="true"
+            android:theme="@style/Theme.UnitConverter"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Fluids"
+            android:exported="true"
+            android:theme="@style/Theme.UnitConverter"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".Speed" />
+        <activity android:name=".Mass" />
     </application>
 
 </manifest>

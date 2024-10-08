@@ -1,6 +1,10 @@
 package com.example.unitconverter
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,7 +18,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,10 +30,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,12 +49,14 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.example.unitconverter.ui.theme.UnitConverterTheme
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
@@ -62,33 +68,37 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             UnitConverterTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LandingPage(
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                LandingPage(
+                    context = this
+                )
             }
         }
     }
 }
 
+val montseratt = FontFamily(Font(R.font.montserrat_alternates_regular))
+val montserattBold = FontFamily(Font(R.font.montserrat_alt_bold))
+val typographica = FontFamily(Font(R.font.typographica))
+
 @Composable
-fun LandingPage(modifier: Modifier = Modifier) {
+fun LandingPage(context: Context?) {
     val appBg: Painter = painterResource(R.drawable.app_bg)
 
-    Box(modifier = modifier) {
+    Box(modifier = Modifier) {
         Image(
             painter = appBg,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = modifier.fillMaxHeight()
+            modifier = Modifier.fillMaxHeight()
         )
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(80.dp))
+
             DateTimeWidget()
 
             Text(
@@ -96,8 +106,9 @@ fun LandingPage(modifier: Modifier = Modifier) {
                 color = Color.White,
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
+                fontFamily = montserattBold,
                 fontWeight = FontWeight.Bold,
-                modifier = modifier.padding(4.dp)
+                modifier = Modifier.padding(4.dp)
             )
             val items = listOf("Length", "Temperature", "Fluids", "Speed", "Mass")
             val icons = listOf(
@@ -109,17 +120,24 @@ fun LandingPage(modifier: Modifier = Modifier) {
             )
             val painters: List<Painter> = icons.map { painterResource(id = it) }
             ItemList(items = items, painters = painters) { item ->
-                when (item) {
-                    "Length" -> OpenActivity()
-                    "Temperature" -> OpenActivity()
-                    "Fluids" -> OpenActivity()
-                    "Speed" -> OpenActivity()
-                    "Mass" -> OpenActivity()
+                try {
+                    when (item) {
+                        "Length" -> context?.startActivity(Intent(context, Length::class.java))
+                        "Temperature" -> context?.startActivity(Intent(context, Temperature::class.java))
+                        "Fluids" -> context?.startActivity(Intent(context, Fluids::class.java))
+                        "Speed" -> context?.startActivity(Intent(context, Speed::class.java))
+                        "Mass" -> context?.startActivity(Intent(context, Mass::class.java))
+                    }
+                } catch (e: Exception) {
+                    Log.e("LandingPage", "Error starting activity for $item", e)
                 }
             }
+
+            Spacer(modifier = Modifier.height(80.dp))
+
             Button(
-                onClick = { },
-                modifier = modifier
+                onClick = { (context as? Activity)?.finishAffinity() },
+                modifier = Modifier
                     .background(Color.Red, shape = CircleShape)
                     .width(50.dp)
                     .height(50.dp)
@@ -137,23 +155,20 @@ fun LandingPage(modifier: Modifier = Modifier) {
     }
 }
 
-fun OpenActivity() {
-
-}
-
 
 @Composable
-fun ItemRow(text: String, painter: Painter, modifier: Modifier) {
+fun ItemRow(text: String, painter: Painter, onClick: () -> Unit) {
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 12.dp)
-            .height(60.dp),
+            .padding(vertical = 0.dp, horizontal = 14.dp)
+            .height(80.dp)
+            .clickable { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
                 .background(Color(0xff0097b2)),
@@ -163,6 +178,7 @@ fun ItemRow(text: String, painter: Painter, modifier: Modifier) {
                 text = text[0].toString(),
                 color = Color.White,
                 fontSize = 20.sp,
+                fontFamily = typographica,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center
             )
@@ -171,14 +187,15 @@ fun ItemRow(text: String, painter: Painter, modifier: Modifier) {
             text = text,
             color = Color.White,
             fontSize = 20.sp,
-            modifier = modifier
+            fontFamily = montserattBold,
+            modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 8.dp)
         )
         Image(
             painter = painter,
             contentDescription = null,
-            modifier = modifier
+            modifier = Modifier
                 .width(40.dp)
                 .aspectRatio(1f)
         )
@@ -192,8 +209,7 @@ fun ItemList(items: List<String>, painters: List<Painter>, onItemClick: (String)
             ItemRow(
                 text = item,
                 painter = painters[index],
-                modifier = Modifier
-                    .clickable { onItemClick(item) }
+                onClick = { onItemClick(item) }
             )
         }
     }
@@ -227,17 +243,19 @@ fun DateTimeWidget() {
             text = currentDate,
             color = Color.White,
             modifier = Modifier.padding(top = 4.dp),
-            fontSize = 14.sp
+            fontSize = 14.sp,
+            fontFamily = typographica,
         )
         Text(
             text = currentTime,
             color = Color.White,
             fontSize = 52.sp,
-            fontWeight = FontWeight.ExtraBold
+            fontFamily = typographica
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputRow(
     userInput: String,
@@ -259,10 +277,10 @@ fun InputRow(
         "Meters to Feet" -> "Length (m)" to "m"
 
         // Fluid conversions
-        "Liters to Milliliters" -> "Volume (L)" to "L"
-        "Milliliters to Liters" -> "Volume (mL)" to "mL"
-        "Gallons to Liters" -> "Volume (gal)" to "gal"
-        "Liters to Gallons" -> "Volume (L)" to "L"
+        "Liters in Milliliters" -> "Volume (L)" to "L"
+        "Milliliters in Liters" -> "Volume (mL)" to "mL"
+        "Gallons in Liters" -> "Volume (gal)" to "gal"
+        "Liters in Gallons" -> "Volume (L)" to "L"
 
         // Mass conversions
         "Kilograms to Grams" -> "Mass (kg)" to "kg"
@@ -279,7 +297,7 @@ fun InputRow(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
+            .width(380.dp)
             .background(Color.White, shape = RoundedCornerShape(40.dp))
             .height(60.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -289,13 +307,29 @@ fun InputRow(
             text = inputUnit,
             color = Color(0xff0097b2),
             textAlign = TextAlign.Center,
+            fontFamily = montserattBold,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold
         )
         TextField(
             value = userInput,
             onValueChange = onUserInputChange,
-            label = { Text(inputLabel) }
+            label = {
+                Text(
+                    text = inputLabel,
+                    fontFamily = montseratt
+                )
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.White,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = Color.Black
+            ),
+            textStyle = TextStyle(
+                fontFamily = montseratt,
+                fontSize = 16.sp
+            )
         )
         Box(
             modifier = Modifier
@@ -313,7 +347,11 @@ fun InputRow(
 }
 
 @Composable
-fun ConversionChat(chatMessages: List<Pair<String, String>>, modifier: Modifier = Modifier) {
+fun ConversionChat(
+    chatMessages: List<Pair<String, String>>,
+    selectedConversion: String,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -324,9 +362,9 @@ fun ConversionChat(chatMessages: List<Pair<String, String>>, modifier: Modifier 
         ) {
             items(chatMessages) { message ->
                 if (message.first == "user") {
-                    UserChatBubble(message.second)
+                    UserChatBubble(message.second, selectedConversion)
                 } else {
-                    ResponseChatBubble(message.second)
+                    ResponseChatBubble(message.second, selectedConversion)
                 }
             }
         }
@@ -334,7 +372,7 @@ fun ConversionChat(chatMessages: List<Pair<String, String>>, modifier: Modifier 
 }
 
 @Composable
-fun UserChatBubble(message: String) {
+fun UserChatBubble(message: String, selectedConversion: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -344,6 +382,8 @@ fun UserChatBubble(message: String) {
         Text(
             text = message,
             color = Color.White,
+            fontSize = 18.sp,
+            fontFamily = montseratt,
             modifier = Modifier
                 .background(Color(0xFF14ACE4), shape = RoundedCornerShape(8.dp))
                 .padding(8.dp)
@@ -355,13 +395,19 @@ fun UserChatBubble(message: String) {
                 .background(Color(0xFF14ACE4), shape = CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "C", color = Color.White, fontWeight = FontWeight.Bold)
+            Text(
+                text = selectedConversion[0].toString(),
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = typographica
+            )
         }
     }
 }
 
 @Composable
-fun ResponseChatBubble(message: String) {
+fun ResponseChatBubble(message: String, selectedConversion: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -374,12 +420,23 @@ fun ResponseChatBubble(message: String) {
                 .background(Color(0xFF00BF63), shape = CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "K", color = Color.White, fontWeight = FontWeight.Bold)
+            Text(
+                text = selectedConversion[
+                    selectedConversion
+                        .lastIndexOf(" ") + 1
+                ].toString(),
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = typographica
+            )
         }
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = message,
             color = Color.White,
+            fontSize = 18.sp,
+            fontFamily = montseratt,
             modifier = Modifier
                 .background(Color(0xFF00BF63), shape = RoundedCornerShape(8.dp))
                 .padding(8.dp)
@@ -410,5 +467,5 @@ fun PreviewItemList() {
 @Preview(showBackground = true)
 @Composable
 fun MainPreview() {
-    LandingPage(modifier = Modifier)
+    LandingPage(context = null)
 }

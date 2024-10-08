@@ -31,7 +31,8 @@ fun ConversionScreen(
     onUserInputChange: (String) -> Unit,
     onSendClick: () -> Unit,
     chatMessages: List<Pair<String, String>>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit
 ) {
     val appBg: Painter = painterResource(R.drawable.app_bg)
     var showAdditionalButtons by remember { mutableStateOf(false) }
@@ -41,7 +42,8 @@ fun ConversionScreen(
             painter = appBg,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier
+                .fillMaxHeight()
         )
         Column(
             modifier = Modifier
@@ -57,6 +59,7 @@ fun ConversionScreen(
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
+                fontFamily = montserattBold,
                 modifier = Modifier.padding(16.dp)
             )
 
@@ -108,9 +111,7 @@ fun ConversionScreen(
                 }
             }
 
-            ConversionChat(chatMessages = chatMessages, modifier = Modifier.weight(1f))
-
-            Spacer(modifier = Modifier.height(8.dp))
+            ConversionChat(chatMessages, selectedConversion, Modifier.weight(1f))
 
             val icons = listOf(
                 R.drawable.ruler,
@@ -132,25 +133,27 @@ fun ConversionScreen(
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(top = 4.dp, bottom = 8.dp, start = 16.dp, end = 16.dp)
+                    .background(Color.Transparent),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Image(
                     painter = painterResource(id = selectedIcon),
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.width(40.dp)
                 )
 
                 Box(
                     modifier = Modifier
-                        .width(50.dp)
+                        .width(40.dp)
                         .background(Color.Transparent)
-                        .clickable { }
+                        .clickable { onBackClick() }
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.left_arrow),
-                        contentDescription = "Send",
+                        contentDescription = null,
                         tint = Color(0xffff5757)
                     )
                 }
@@ -162,6 +165,8 @@ fun ConversionScreen(
                 onSendClick = onSendClick,
                 conversionType = selectedConversion
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -171,13 +176,13 @@ fun ConversionScreen(
 fun ConversionScreenPreview() {
     var userInput by remember { mutableStateOf("") }
     var chatMessages by remember { mutableStateOf(listOf<Pair<String, String>>()) }
-    var selectedConversion by remember { mutableStateOf("Celsius to Fahrenheit") }
+    var selectedConversion by remember { mutableStateOf("Celsius in Fahrenheit") }
 
     val items = listOf(
-        "Celsius to Fahrenheit",
-        "Fahrenheit to Celsius",
-        "Celsius to Kelvin",
-        "Kelvin to Celsius"
+        "Celsius in Fahrenheit",
+        "Fahrenheit in Celsius",
+        "Celsius in Kelvin",
+        "Kelvin in Celsius"
     )
 
     ConversionScreen(
@@ -194,6 +199,7 @@ fun ConversionScreenPreview() {
             }
         },
         chatMessages = chatMessages,
-        modifier = Modifier
+        modifier = Modifier,
+        onBackClick = { }
     )
 }

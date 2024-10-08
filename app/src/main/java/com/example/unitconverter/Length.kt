@@ -1,5 +1,7 @@
 package com.example.unitconverter
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,19 +12,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.unitconverter.UnitConverter
 
 class Length : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LengthScreen()
+            LengthScreen(Modifier, this)
         }
     }
 }
 
 @Composable
-fun LengthScreen(modifier: Modifier = Modifier) {
+fun LengthScreen(modifier: Modifier = Modifier, context : Context?) {
     var userInput by remember { mutableStateOf("") }
     var chatMessages by remember { mutableStateOf(listOf<Pair<String, String>>()) }
     var selectedConversion by remember { mutableStateOf("Meters to Kilometers") }
@@ -48,7 +49,8 @@ fun LengthScreen(modifier: Modifier = Modifier) {
             }
         },
         chatMessages = chatMessages,
-        modifier = modifier
+        modifier = modifier,
+        onBackClick = { context?.startActivity(Intent(context, MainActivity::class.java)) }
     )
 }
 
@@ -94,5 +96,5 @@ fun handleLengthSend(
 @Preview(showBackground = true)
 @Composable
 fun LengthPreview() {
-    LengthScreen(modifier = Modifier)
+    LengthScreen(Modifier, null)
 }
