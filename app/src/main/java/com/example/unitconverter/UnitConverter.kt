@@ -25,8 +25,8 @@ class UnitConverter {
     // Fluid conversions
     fun litersToMilliliters(liters: Double): Double = formatResult(liters * 1000)
     fun millilitersToLiters(milliliters: Double): Double = formatResult(milliliters / 1000)
-    fun gallonsToLiters(gallons: Double): Double = formatResult(gallons * 3.78541)
-    fun litersToGallons(liters: Double): Double = formatResult(liters / 3.78541)
+    fun gallonsToLiters(gallons: Double): Double = formatResult(gallons * 3.785411784)
+    fun litersToGallons(liters: Double): Double = formatResult(liters / 3.785411784)
 
     // Speed conversions
     fun kilometersPerHourToMilesPerHour(kph: Double): Double = formatResult(kph / 1.60934)

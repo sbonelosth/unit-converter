@@ -67,6 +67,7 @@ fun ConversionScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                Text(text = "Click to Change Conversion Type", color = Color(0xfff0f8ff))
                 Button(
                     onClick = { showAdditionalButtons = !showAdditionalButtons },
                     modifier = Modifier

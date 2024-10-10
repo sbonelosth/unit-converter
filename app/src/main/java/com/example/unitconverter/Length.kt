@@ -87,7 +87,7 @@ fun handleLengthSend(
                 else -> "Invalid conversion type" to "Invalid conversion type"
             }
         } else {
-            "What is $userInput °C in Kelvin?" to "Invalid input type"
+            "What is $userInput $conversionType?" to "Invalid input type"
         }
         updateState("", chatMessages + ("user" to userMessage) + ("response" to responseMessage))
     }

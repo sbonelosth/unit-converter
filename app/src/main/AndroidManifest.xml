@@ -36,7 +36,11 @@
             android:exported="true"
             android:theme="@style/Theme.UnitConverter"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".Speed" />
+        <activity
+            android:name=".Speed"
+            android:exported="true"
+            android:theme="@style/Theme.UnitConverter"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Mass"
             android:exported="true"

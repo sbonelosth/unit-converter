@@ -144,7 +144,11 @@ fun LandingPage(context: Context?) {
                 Icon(
                     painter = painterResource(id = R.drawable.cross),
                     contentDescription = null,
-                    tint = Color(0xffff5757)
+                    tint = Color(0xffff5757),
+                    modifier = Modifier
+                        .align(alignment = Alignment.Center)
+                        .width(40.dp)
+                        .height(40.dp)
                 )
             }
         }
@@ -285,8 +289,8 @@ fun InputRow(
         "Kilograms in Pounds" -> "Mass (kg)" to "kg"
 
         // Speed conversions
-        "km/h to mph" -> "Speed (km/h)" to "km/h"
-        "mph to km/pr" -> "Speed (mph)" to "mph"
+        "km/h to mph" -> "Speed (km/h)" to "k"
+        "mph to km/h" -> "Speed (mph)" to "m"
 
         else -> "Value" to ""
     }

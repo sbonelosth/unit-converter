@@ -18,7 +18,7 @@ class Mass : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MassScreen()
+            MassScreen(Modifier, this)
         }
     }
 }
